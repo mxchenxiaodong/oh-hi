@@ -10,750 +10,863 @@ class: 'text-center'
 highlighter: shiki
 # some information about the slides, markdown enabled
 info: |
-  ## 微型web框架的实现原理简单分析
-
----
-# 微型web框架的实现原理
-
-Rack + DSL
-
-oliver.chen
----
-
-# 一个Web应用需要什么？
-
-<v-clicks>
-
-1. 能够响应 http 请求
-2. 定义路由及响应内容
-3. 尽可能少写点代码
-4. ...
-
-</v-clicks>
+  ## Ruby 培训资料
 
 ---
 
-# Ruby世界中，有个Rack
+# Ruby 培训资料
 
-初步使用
+FROM RCC
 
-安装 `rack`
+---
 
-```ruby
-gem install rack
+## 一、工具与调试
+
+1、RVM
+
+RVM 是一个命令行工具，可以提供一个便捷的多版本 Ruby 环境的管理和切换。
+
+官方网站：https://rvm.io/
+
+常用的命令：
+
+```bash
+# 列出已知的 Ruby 版本
+rvm list known
+
+# 安装一个 Ruby 版本 (--disable-binary)
+rvm install ruby-2.6.3
+
+# 切换 Ruby 版本 (设置为默认版本: --default)
+rvm use ruby-2.6.3
+
+# 删除 Ruby 版本
+rvm remove ruby-2.6.3
 ```
 
-app.rb 文件
+---
+
+2、irb
+
+`irb` 是 `Ruby` 附带的交互式编程环境。
+
+只需要一个命令，就可以进入到ruby环境，运行你的代码。
+
+```bash
+# 终端输入 irb 进入
+
+irb(main):001:0> 23 + 27
+=> 50
+
+irb(main):008:0> hi = "Hello, Rcc!"
+=> "Hello, Rcc!"
+
+....
+```
+
+输入 `exit` 或 `quit` 退出`irb` 。
+
+---
+
+3、断点
+
+相信你以前写代码的时候，也经常使用到断点，不得不说断点真的是我们程序员写代码的“必备良药”。
+
+Gemfile 安装 gem
 
 ```ruby
-require 'rack'
+gem "pry-byebug", "~> 3.8.0"
+```
 
-app = proc do |env|
-  [200, {'Content-Type' => 'text/html'}, ['Hello, Rack demo']]
+执行：`bundle install` 进行安装。
+
+然后在需要调试的地方加入一行：
+
+```ruby
+binding.pry
+```
+
+常用操作步骤：
+
+```bash
+next
+step
+quit
+```
+
+---
+
+## 二、常见的数据类型
+
+ruby中的数据类型与其他语言还是有很多共通的地方的~
+
+---
+
+## 三、流程控制
+
+待写
+
+---
+
+## 四、类、实例变量、实例方法、类方法
+
+1、在 Ruby 中，可以用 class 定义一个类。类名的首字母应该**大写**。
+
+```ruby
+class Customer
+end
+```
+
+2、用 new 生成类的实例。
+
+```ruby
+customer1 = Customer.new
+customer2 = Customer.new
+```
+
+---
+
+3、为类定义一个实例方法。
+
+```ruby
+class Customer
+  def hello
+    puts "Hello Ruby!"
+  end
 end
 
-Rack::Server.start(app: app)
+customer1 = Customer.new
+customer1.hello
 ```
 
-执行 `ruby app.rb`, 访问 http://0.0.0.0:9292/
+4、定义一个类方法。
 
+```ruby
+class Customer
+   def self.world
+    puts "world ruby!"
+   end
+end
 
----
-
-# 什么是Rack？
-
-
-<!-- <div class="grid grid-cols-2 gap-x-4"> -->
-<div grid="~ cols-2 gap-2" m="-t-2">
-  <div v-click>
-    <p> 1. 是一份 <a href="https://github.com/rack/rack/blob/master/SPEC.rdoc">规范</a></p>
-
-  `应用程序`与`应用服务器`之间的接口规范。
-
-  <br>
-
-  应用程序框架：`Rails` / `Sinatra` / `Roda` / ...
-
-  应用服务器：`WEBrick` / `Unicorn` / `Puma` / ...
-
-  </div>
-
-  <div v-click>
-    <p> 2. 是一个 <a href="https://github.com/rack/rack">gem</a></p>
-
-    封装了对HTTP数据的处理。
-
-    比如：`解析path` / `接入middleware` / ...
-  </div>
-</div>
+# 类方法的调用
+Customer.world
+```
 
 ---
 
-# Rack返回结构
+5、实例变量
 
-<v-clicks>
+- 以“@”符号开头。
+- 实例变量属于该实例方法所在类的实例，而不是属于该方法。
+- 所以实例变量，在实例方法里面都可以访问到。
+- 实例变量无须显式声明即可使用。如果使用一个未定义的实例变量，则该实例变量的值为nil。
 
-- 一个对象，可以相应 `call` 方法 （可以是 proc 或者 自定义对象）
-- 接收一个 环境变量 `env` 作为参数
-- 返回一个三个元素的数组
-  1. HTTP code
-  2. HTTP header
-  3. HTTP body -- -- 一个响应 each 方法的对象，用来处理为body
+```ruby
+class Customer
+  def info1
+    p @name
+  end
 
-</v-clicks>
+  def info2
+    @name = 'customer'
+  end
+
+end
+
+customer = Customer.new
+
+customer.info1
+customer.info2
+customer.info1
+
+```
+
+---
+
+6、使用 initialize 初始化实例变量：
+
+```ruby
+class Customer
+   def initialize(id, name, addr)
+      @cust_id = id
+      @cust_name = name
+      @cust_addr = addr
+   end
+
+   def show
+     "id: #{@cust_id}, name: #{@cust_name}, addr: #{@cust_addr}"
+   end
+end
+
+cust1 = Customer.new("1", "John", "Wisdom Apartments, Ludhiya")
+cust2 = Customer.new("2", "Poul", "New Empire road, Khandala")
+
+cust1.show
+cust2.show
+```
 
 <br>
+<br>
 
-<v-click>
+> 自行了解：
+> - attr_accessor
 
-```ruby
-app = proc do |env| 
-  [200, {'Content-Type' => 'text/html'}, ['Hello, Rack demo']]
-end
-```
-
-</v-click>
 
 ---
 
-# 另一种形式
+## 二、打开类、猴子补丁
+
+1、打开类
 
 <div class="grid grid-cols-2 gap-x-4">
-  <div>
+<div>
 
-miniweb.rb
+先看个例子。
 
 ```ruby
-module Miniweb
- class Base
-
-  def call(env)
-    [200, {'Content-Type' => 'text/html'}, ['Hello, MiniApp demo']
-  end
-
- end
+class D
+  def x; 'x'; end
 end
+
+class D
+  def y; 'y'; end
+end
+
+obj = D.new
+obj.x   # => "x"
+obj.y   # => "y"
 ```
-  </div>
 
-  <div>
+</div>
 
-app.rb
-```ruby
-require 'rack'
-require_relative 'miniweb'
+<div>
 
-app = Miniweb::Base.new
+上面包含了两个地方 `class D` 的定义，但是不会出现2个类的定义。
 
-Rack::Server.start(app: app)
-```
-  </div>
+也就是说，在第二次定义 D 类时，Ruby 能够找到第一次定义的 D 类并把新的方法（y）添加到 D 类中。
+
+这叫做 “打开类” (Open class)。
+
+> 换句话说，可以在任何时候打开一个已经存在的类，并向里面添加新的方法——包括 String 和 Array 这样的标准类。
+
+</div>
 </div>
 
 ---
 
-# 完成了第一步，响应HTTP请求，那下一步？
+2、猴子补丁
 
-<v-clicks>
+当打开类重新定义新的方法时，如果跟该类已有的方法重名，原来的方法就会被覆盖。
 
-- 需要定义路由
-- 路由对应的处理
-
-</v-clicks>
-
----
-
-# 来看看平时使用 Grape 定义路由的方式
-
-
-```ruby
-desc "字段详情页"
-params do 
-  requires :field_id, type: String, desc: "字段 ID"
-end
-get "/form_fields/show" do 
-  form_field = RccForm::Metadata::FormField.where(id: params[:field_id]).first 
-  raise NotFound if form_field.nil? 
-  render_happy(data: form_field.show_json)
-end
-```
-
----
-
-# 我们需要的结构
-
-```ruby
-get "/show" do
-end
-
-post "/create" do
-end
-
-put "/update" do
-end
-
-delete "/destory" do
-end
-```
-
----
-
-
-# 定义路由收集的方法
-
-miniweb.rb
-
-```ruby
-module Miniweb
-  class Base
-    attr_reader :routes
-
-    def initialize
-      @routes = {}
-    end
-
-    def get(path, &handler)
-      route("GET", path, &handler)
-    end
-
-    def post(path, &handler)
-      route("POST", path, &handler)
-    end
-
-    # verb: get/post/put/delete
-    def route(verb, path, &handler)
-      @routes[verb] ||= {}
-      @routes[verb][path] = handler
-    end
-  end
-end
-```
-
----
-
-
-# 进行路由收集
-
-app.rb
-
-```ruby {6-14}
-require 'rack'
-require_relative 'miniweb'
-
-app = Miniweb::Base.new
-
-app.get "/show" do
-  p "show me ..."
-  [200, {}, ["mini_app show ..."]]
-end
-
-app.post "/create" do
-  p "create me ..."
-  [200, {}, ["mini_app create ..."]]
-end
-
-p app.routes
-# {
-#   "GET"=>{"/show"=>#<Proc:0x00007fe01b162d00@mini_app.rb:31>},
-#   "POST"=>{"/create"=>#<Proc:0x00007fe01b162be8@mini_app.rb:35>}
-#}
-```
-
----
-
-# call 方法里面获取请求信息
-
-此时，去访问 http://0.0.0.0:9292/show ，还是得到旧的结果。
-
-那是因为我们还没在 `call` 进行路由的判断。
-
-miniweb.rb
-
-```ruby
-module Miniweb
- class Base
-
-  # .....
-
-  def call(env)
-    [200, {'Content-Type' => 'text/html'}, ['Hello, MiniApp demo']
-  end
-
- end
-end
-```
-
-查看协议部分 -- https://github.com/rack/rack/blob/master/SPEC.rdoc
-
----
-
-# 查看 env 的内容
-
-```ruby
-{"rack.version"=>[1, 3],
- "rack.errors"=>#<IO:<STDERR>>,
- "rack.multithread"=>true,
- "rack.multiprocess"=>false,
- "rack.run_once"=>false,
- "SCRIPT_NAME"=>"",
- "QUERY_STRING"=>"",
- "SERVER_PROTOCOL"=>"HTTP/1.1",
- "SERVER_SOFTWARE"=>"puma 3.12.6 Llamas in Pajamas",
- "GATEWAY_INTERFACE"=>"CGI/1.2",
- "REQUEST_METHOD"=>"GET",
- "REQUEST_PATH"=>"/show",
- "REQUEST_URI"=>"/show",
- "HTTP_VERSION"=>"HTTP/1.1",
- "HTTP_HOST"=>"0.0.0.0:9292",
- "HTTP_USER_AGENT"=>
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
- "HTTP_ACCEPT"=>
-  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
- "HTTP_ACCEPT_ENCODING"=>"gzip, deflate",
- "HTTP_ACCEPT_LANGUAGE"=>"zh-CN,zh;q=0.9,en;q=0.8,no;q=0.7",
- "HTTP_PURPOSE"=>"prefetch",
- ...
-```
-
----
-
-# 借助 rack 里的工具
+这称之为「猴子补丁（MonkeyPatch）」。
 
 <div class="grid grid-cols-2 gap-x-4">
-  <div>
+<div>
 
-初版
+举个例子，你打开 String 类，并添加一个实例方法
 
 ```ruby
-# miniweb.rb
-module Miniweb
-  class Base
-    def call(env)
-      @request = Rack::Request.new(env)
-      verb = @request.request_method
-      requested_path = @request.path_info
-
-      handler = @routes[verb][requested_path]
-
-      handler.call
-    end
-  end
-end
-```
-  Rack 中有许多类似 `Rack::Request` 的工具可以使用。
-  </div>
-
-  <div>
-
-未找到匹配路由
-
-```ruby {10-15}
-# miniweb.rb
-module Miniweb
-  class Base
-    def call(env)
-      @request = Rack::Request.new(env)
-      verb = @request.request_method
-      requested_path = @request.path_info
-
-      handler = @routes[verb][requested_path]
-
-      if handler
-        handler.call
-      else
-        [404, {}, ["url no found ..."]]
-      end
-    end
+class String
+  def myself_to_s
+    "myself to_s"
   end
 end
 ```
 
-  </div>
+这个时候，你发现名字太长了，灵机一动把名字改成了 to_s
+
+```ruby
+class String
+  def to_s
+    "myself to_s"
+  end
+end
+```
+
 </div>
 
+<div>
+
+从这个案例其实可以知道：
+
+- Ruby可以很方便地打开一个已定义的类，重载里面已有的方法
+- 猴子补丁有时是危险的
+
+</div>
+</div>
 
 ---
 
-最基本的路由匹配已经有了。 -- -- 【不过目前只支持等值匹配】
+## 三、模块
 
-那么如何处理模式匹配呢？
+1、模块可以将方法，类和常量组合在一起
 
-<br>
-<br>
-
-有这么可以库: [mustermann: your personal string matching expert](https://github.com/sinatra/mustermann)
-
-可以指定各种匹配的模式：
-| Type        | Example           | Compatible with  |
-| ------------- |:-------------:| -----:|
-| rails      | /:slug(.:ext)      |   Ruby on Rails, Journey, HTTP Router, Hanami, Scalatra (if configured), NYNY |
-| shell | /*.{png,jpg}      |    Unix Shell (bash, zsh) |
-| sinatra | /:slug(.:ext)?      |    Sinatra (2.x), Padrino (>= 0.13.0), Pendragon, Angelo |
-| ...   | ... |  ... |
-
----
-
-Gemfile 文件：
-
-```ruby
-gem 'mustermann'
-```
-
-使用方式：
-
-```ruby {none|3-4|6-8|10-12|all}
-require 'mustermann'
-
-# 声明一个模式
-pattern = Mustermann.new('api/users/:id')
-
-# 尝试匹配
-pattern === 'api/users/1' # true
-pattern === 'api/posts/1' # false
-
-# 参数解析
-params = pattern.params('api/users/1')
-# {"id"=>"1"}
-```
-
-
----
-
-这样一来，我们就暂时解决了 “模式匹配” 的问题~
-
-<br>
-我们在路由收集的时候，可以为每个路由生成一个 “模式”，用来后面做匹配。
-
-也就是除了原先保存的一个 `block`, 现在还得加多一个 `pattern` .
 
 <div class="grid grid-cols-2 gap-x-4">
-  <div>
+<div>
 
-等值匹配：
+定义一个模块：
+
 ```ruby
-def route(verb, path, &handler)
-  @routes[verb] ||= {}
-  @routes[verb][path] = handler
+module Trig
+   PI = 3.141592654
+
+   def sin
+     puts 'sin'
+   end
+
+   def cos
+     puts 'cos'
+   end
 end
+
+Trig::PI
+
 ```
-  </div>
 
-  <div>
-
-模式匹配：
-```ruby {4-5}
-def route(verb, path, &handler)
-  @routes[verb] ||= []
-
-  pattern = Mustermann.new(path)
-  @routes[verb] << [pattern, handler]
-end
-```
-  </div>
 </div>
+
+<div>
+
+模块有两个主要好处：
+
+- 模块提供名称空间并防止名称冲突。
+- 模块实现了mixin 功能。
+
+<br>
+<br>
+<br>
+
+> 需要注意：
+> 模块并不能生成实例。比如 Trig.new 。
+
+</div>
+</div>
+
 ---
 
-已收集路由：
+2、include
 
-- pattern1: `Mustermann.new('api/users/:id')`
-- pattern2: `Mustermann.new('api/posts/:id')`
-- pattern3: `Mustermann.new('api/projects/:id')`
-- ...
+当类 include 模块之后，就相当于给类添加了「实例方法」。
 
-那么此时请求进来 -- -- `api/projects/1` ，如何判断该URL属于上面的哪个模式？
+```ruby
+class Sample
+  include Trig
+end
+
+Sample.new.sin
+```
+
+3、extend
+
+当类 extend 模块以后，就相当于给类添加了「类方法」。
+
+```ruby
+class Sample
+  extend Trig
+end
+
+Sample.sin
+```
+
+这种  `include / extend` 的能力，被称为 `mixin`  。
+
+可以将方法按模块组织，然后被各个其他类引用，达到复用的效果。
 
 ---
 
-最简单一种就是: **遍历**.
+## 五、特性
+
+1、迭代器
+
+其他语言中，进行遍历，可能更多是使用 `for / while` 循环来处理。
+
+而在 Ruby 中，更多是使用 迭代器 来进行相关的处理。
+
+- 打印出数组的每个元素 — — `each`
 
 <div class="grid grid-cols-2 gap-x-4">
-  <div>
+<div>
 
-等值匹配：
-```ruby {6}
-def call(env)
-  @request = Rack::Request.new(env)
-  verb = @request.request_method
-  requested_path = @request.path_info
+```ruby
+# 定义一个数组
+users = ['oliver', 'peter', 'xiaoming', 'cc']
 
-  handler = @routes[verb][requested_path]
+# 多行
+users.each do |username|
+  puts username
+end
 
-  if handler
-    handler.call
-  else
-    [404, {}, ["url no found ..."]]
-  end
+# oliver
+# peter
+# xiaoming
+# cc
+
+# 单行
+users.each { |username| puts username }
+```
+
+</div>
+
+<div>
+
+```ruby
+# 如果需要带上索引, 使用 each_with_index，注意参数由1个变成2个
+users.each_with_index do |username, index|
+  puts "index: #{index}, #{username}"
+end
+
+# index: 0, oliver
+# index: 1, peter
+# index: 2, xiaoming
+# index: 3, cc
+```
+
+</div>
+</div>
+---
+
+- 将每个元素的处理结果返回 — — `map`
+
+```ruby
+# 定义一个数组
+users = ['oliver', 'peter', 'xiaoming', 'cc']
+
+users.map { |username| username.upcase }
+
+# ["OLIVER", "PETER", "XIAOMING", "CC"]
+```
+
+<br>
+
+- 进行过滤，返回条件为 true 的元素 — —  `select`
+
+```ruby
+users = ['oliver', 'peter', 'xiaoming', 'cc']
+
+users.select { |username| username == 'xiaoming' }
+# ["xiaoming"]
+```
+
+<br>
+
+- 所有元素都满足条件，返回 true / false — —  `all?`
+
+```ruby
+numbers = [1, 2, 3, 4]
+
+numbers.all? { |num| num > 0 }
+```
+
+---
+
+- 所有元素中有任意一个满足条件即可， 返回 true / false  — — `any?`
+
+```ruby
+numbers = [1, 2, 3, 4]
+
+numbers.any? { |num| num > 0 }
+```
+
+<br>
+
+- 进行次数循环 — —  `times`
+
+```ruby
+10.times { |i| puts i }
+```
+
+<br>
+<br>
+
+看了以上的例子，可以发现，对于这种遍历元素，针对元素进行不同处理的形式，
+
+在 Ruby 中，都是`迭代 + 块`方式来处理。
+
+相关的方法有很多，可以查阅文档，包括 Hash / Array / … 。[Array](https://apidock.com/ruby/Array)
+
+---
+
+2、block — — 块
+
+我们上面看到的多行 `do |xx| … end` 结构，或者单行 `{  |xx|  … }`  格式，就是一个块。
+
+- 怎么定义一个块？
+- 一个块可以用来干嘛？
+
+<div class="grid grid-cols-2 gap-x-4">
+<div>
+
+在定义一个方法的时候：
+
+```ruby
+def say_hello
+  yield  # 表示接收一个 block
+end
+
+# 进行方法调用，可以传入一个 block
+say_hello do
+  puts 'block - 1 do.'
+end
+
+say_hello do
+  puts 'block - 2 do.'
 end
 ```
-  </div>
 
-  <div>
+</div>
 
-模式匹配：
-```ruby {6-17}
-def call(env)
-  @request = Rack::Request.new(env)
-  verb = @request.request_method
-  requested_path = @request.path_info
+<div>
 
-  # 遍历匹配
-  routes = @routes[verb] || []
-  handler = catch(:halt) do
-    routes.each do |pattern, block|
-      if pattern === requested_path
-        @params = pattern.params(requested_path)
-        throw :halt, block
-      end
-    end
+另一种格式：
 
-    throw :halt
+```ruby
+# &block 表示接收一个块
+def say_hello_other(&block)
+  # 判断是否有传入 block，有传入的话再进行 block 的调用
+  if block_given?
+    block.call
   end
 end
+
+say_hello_other { puts 'block - other do.' }
 ```
-  </div>
+
+</div>
 </div>
 
 ---
 
-这里有个技巧，使用了：
+那么可以看到，基于这种模式，像上面迭代器中的各种方法的实现，
 
-```ruby
-respone = catch(:halt) do
-  # ...
-  # ...
+其实都是在调用的传入一个 `block`，在 `block` 做各种不同的处理。
 
-  throw :halt
-
-  # ...
-end
-```
-
-可以在后续不断加入代码，不管嵌套多深，只需要抛出 `throw :halt`，就可以跳回 `catch(:halt)` 的位置。
-
-`catch ... throw ...` 是成对出现的。
+- [Understanding Ruby Blocks.](https://medium.com/@noordean/understanding-ruby-blocks-3a45d16891f1)
+- [Mastering Ruby Blocks in Less Than 5 Minutes](https://mixandgo.com/learn/ruby-blocks)
 
 ---
 
+3、当前对象（self）
+
+- 在 Ruby 中，`self` 是一个特殊的变量，它指向当前的对象。
+- 它也是默认方法接收者。
+- 实例变量就是在 `self` 中查找的。
+
+<div class="grid grid-cols-2 gap-x-4">
+<div>
+
+```ruby
+class User
+  def initialize(name)
+    @name = name
+  end
+
+  def say
+    puts "通用实例方法"
+
+    # 调用另一个实例方法
+    self.email_noti
+
+    puts self
+  end
+
+  def email_noti
+    puts 'email_noti'
+  end
+end
+```
+
+</div>
+
+<div>
+
+```ruby
+user = User.new("xiaoming")
+
+user.say
+# "通用实例方法"
+# "email_noti"
+# #<User:0x00007ffb8e11e018 @name="xiaoming">
+```
+
+</div>
+</div>
+
+---
+
+<div class="grid grid-cols-2 gap-x-4">
+<div>
+
+```ruby
+class User
+  # 类方法
+  # 注意：当前 self 是指？打开当前类，当前作用域下，就是 User。
+  def self.all_can_use
+   puts '使用 User.all_can_use 进行调用'
+  end
+
+  # 类方法的另一种写法
+  # 使用 `class << `, 表示打开某个对象，添加属于它自己的方法
+  # class << self 或者 class << User
+  class << self
+   def all_can_use_2
+     puts '使用 User.all_can_use_2 进行调用'
+   end
+  end
+end
+```
+
+</div>
+
+<div>
+
+```ruby
+User.all_can_use
+# 使用 User.all_can_use 进行调用
+
+User.all_can_use_2
+# 使用 User.all_can_use_2 进行调用
+```
+
+</div>
+</div>
+
+在 Ruby 中，需要时刻注意当前的 `self` 是谁。
+理解了 当前的`self`，很多问题都会变得清晰。
+
+---
+
+## 六、对象模型
+
+1、继承链
+
+```ruby
+class User
+  def initialize(name)
+    @name = name
+  end
+end
+
+user = User.new("xiaoming")
+
+# 查看 user 的类
+user.class  # User
+
+# 查看 User 类的超类
+user.class.superclass  # Object 。也就是表示： User 继承自 Object
+
+# 查看祖先链（类的祖先链）
+user.class.ancestors
+# [User, Object, Kernel, BasicObject]
+```
+
+祖先链由类和其超类以及module组成。
+
+---
+
+2、方法查找
+
+<div class="grid grid-cols-2 gap-x-4">
+<div>
+
+```ruby
+class User
+  def initialize(name)
+    @name = name
+  end
+
+  def say
+    "通用实例方法"
+  end
+end
+
+user = User.new("xiaoming")
+user_2 = User.new("cc")
+
+# 单独給一个对象新增一个方法
+def user.my_posts
+  ["文章1", "文章2"]
+end
+```
+
+</div>
+
+<div>
+
+Ruby 中，一个实例方法的查找，顺序如下：
+
+- 先确定当前对象（`receiver`），先查找该对象是否有单独定义方法。
+- 继而查找当前对象的类中定义的实例方法，并沿着祖先链往上找定义的实例方法。
+- 如果找不到，会调用 `method_missing` 方法。如果 `method_missing` 没有定义，则抛出 `NoMethodError` 异常。
+
+</div>
+</div>
+
+---
+
+## 七、黑魔法
+
+1、方法调用可以省略括号
+
+```ruby
+def say
+  puts 'say'
+end
+
+# 调用
+=> say
+=> say()
+
+---------------------
+
+def hello(name)
+  puts "hello, #{name}"
+end
+
+# 调用
+=> hello "xiaoming"
+=> hello("xiaoming")
+```
+
+---
+
+2、ruby中【*】和【**】的功用
+
+<div class="grid grid-cols-2 gap-x-4">
+<div>
+
+- 用 ` *args ` 的形式来接收不确定个数的参数。
+
+```ruby
+def splat_arguments(*args)
+  args
+end
+
+splat_arguments(:linux, "ms")
+# => [:linux, "ms"]
+
+splat_arguments(:linux, "ms", String)
+# => [:linux, "ms", String]
+
+```
+
+</div>
+
+<div>
+
+-  用 ` *args ` 的形式来表示 Keyword Arguments
+
+```ruby
+def splat_arguments(*args, **keyword_args)
+  p args
+  p keyword_args
+end
+
+splat_arguments("first", "second", name: nil, color: 'Red')
+# ["first", "second"]
+# {:name=>nil, :color=>"Red"}
+```
+
+</div>
+</div>
+
+扩展阅读:
+
+- [Everything you should know about Ruby Splats | Alex Castaño](https://alexcastano.com/everything-about-ruby-splats/)
+- [Ruby: Using the Double Splat (**) with Keyword Arguments | Mike Rogers](https://mikerogers.io/2020/08/17/ruby-using-the-double-splat-with-keyword-arguments)
+- [Fun with keyword arguments, hashes, and splats - Justin Weiss](https://www.justinweiss.com/articles/fun-with-keyword-arguments/)
+
+---
+
+3、return的规则
+
+我们知道，在ruby中，永远是怎么方便怎么来~
+
+那么能省略的，当然是要省略的！
+
+```ruby
+# 定义一个方法，返回结果
+def add(a, b)
+  return a + b
+end
+
+# 当最后一行是你的返回结果的时候，
+# 则return关键字可以省略！
+def add(a, b)
+  a + b
+end
+
+# 需要注意的是：
+# 如果不是最后一行，则return还是得乖乖地写哦~
+def add(a, b)
+  return 0 if b == 1
+
+  a + b
+end
+```
+
+---
+
+4、Hash的省略
+
+当方法的参数要求传入一个Hash的时候，则传入hash的时候，可以省略花括号：
+
+```ruby
+#原本定义一个方法，需要返回result
+def func(options = {})
+  options
+end
+
+#调用的时候直接省略花括号
+func(a: 1, b: 2)
+```
+
+---
+
+5、方法名带有 ！和 ?
+
+原来ruby讲究见名知意！而且甚至要带上语气！
+
+- "?": 表示方法返回 bool 的意愿。如 `Array.empty?` (判断数组中元素是否为空)。
+- "!": 表明使用该方法时需注意，可能会改变到原有对象意愿 / 会抛弃异常等。
+
+例子：
+
+```ruby
+Array#empty?
+
+Array#sort
+Array#sort!
+
+String#gsub
+String#gsub!
+
+```
+
 <br>
 <br>
 
-使用遍历的方式，会依赖于路由定义时的顺序，且匹配性能一般。
-
-当然还有更多路由的匹配算法：状态机？基数树？... <br>
-有兴趣的小伙伴也可以深挖下，不同语言的不同框架中是如何处理~
-
-<br>
-<br>
-
-比如 `Rails` 的路由，功能就极其强大~
-
-[在 Swift 下实现了 Rails 风格的路由库](https://ruby-china.org/topics/29133) 中提到：
-
-> Rails 是 Web 开发最强框架绝对不是偶然的，
+> Note:
 >
-> Journey（tenderlove 为 Rails 设计的路由规则解析库）的原理是为路由设计了一门表达式语言（使用 RACC 定义），
+> 方法定义后面加上的后缀，只是约定俗成，为了方便使用的时候更加清晰其方法的意义，
 >
-> 然后构造出 AST 进行匹配，没有任何一个语言的同类库把这个问题上升到如此高度去解决。
->
-> 这并不是炫技，通过这个方式可以实现很多其他途径很难做到的功能并且保持在匹配时的高性能，
->
-> 比如：/articles/(/page/:page)(/sort/:sort) 这种双可选的情况，除了 Rails 没有任何一家可以支持。
+> 可以不遵守，但是为了代码的可读性，加上符号往往让你的代码更加易读~
 
 ---
 
-来看看效果：
+## 八、资料
 
-```ruby
-require 'rack'
-require_relative 'miniweb'
+书籍
+- 《Ruby元编程》
+- railstutorial 《Ruby on Rails教程》，安道翻译。
+- 《应用Rails进行敏捷Web开发》
+- 《The Ruby Way》
+- 《松本行弘的程序世界》
 
-get "/show_pattern/:id" do
-  [200, {}, ["mini_app pattern match ..., params: #{@params}"]]
-end
-
-Rack::Server.start(app: Miniweb::Application)
-```
-
-返回 http://localhost:9292/show_pattern/1
-
-如果此时我想在 `block` 使用各种实例变量/实例方法，比如 `@params`, 能直接使用吗？
-
-```ruby
-# 得到结果 --> params 为空。
-mini_app pattern match ..., params:
-```
-
----
-
-<div class="grid grid-cols-2 gap-x-4">
-  <div>
-
-初版：
-```ruby {3}
-def call(env)
-  if handler
-    handler.call
-  else
-    [404, {}, ["url no found ..."]]
-  end
-end
-```
-
-`handler.call` 的`handler` 是在一个独立的上下文中执行。
-
-可以尝试自行查看 `self` 。
-
-  </div>
-
-  <div>
-
-改版：
-```ruby {3}
-def call(env)
-  if handler
-    instance_eval(&handler)
-  else
-    [404, {}, ["url no found ..."]]
-  end
-end
-```
-
-通过 `instance_eval` 让 `handler` 在实例内执行。
-
-这个实例就是 `Miniweb::Application`， 也就是 `Miniweb::Base.new`，因此可以用到改实例内部的实例变量 / 实例方法，包括 `@params` 。
+文档
+- https://ruby-doc.org/
+- https://rubyapi.org/
 
 
-```ruby
-# http://localhost:9292/show_pattern/1 访问结果为：
-mini_app pattern match ..., params: {"id"=>"1"}
-```
-
-  </div>
-</div>
-
----
-
-# 让使用者更方便
-
-
-现在来瞅瞅存在的问题。
-
-app.rb
-
-```ruby
-app = Miniweb::Base.new
-
-app.get "/show" do
-end
-
-app.post "/create" do
-end
-
-Rack::Server.start(app: app)
-```
-
-<arrow v-click x1="400" y1="10" x2="260" y2="180" color="#564" width="2" arrowSize="1" />
-
-<arrow v-click x1="400" y1="400" x2="160" y2="300" color="#564" width="2" arrowSize="1" />
-
-
-更方便地使用？
-
----
-
-miniweb.rb:
-```ruby {5}
-module Miniweb 
-  class Base 
-  end 
-
-  Application = Base.new   # <-- 新增
-end
-```
-
-app.rb
-```ruby {1}
-app = Miniweb::Application
-
-app.get "/show" do
-end
-
-app.post "/create" do
-end
-
-Rack::Server.start(app: app)
-```
-
-如果 `get / post` 能直接挂到 `Miniweb::Application` 上，就不用 `app` 了?
-
----
-
-miniweb.rb
-```ruby
-module Miniweb
-  module Delegator
-    def self.delegate(*methods, to:)
-      Array(methods).each do |method_name|
-        define_method(method_name) do |*args, &block|
-          to.send(method_name, *args, &block)
-        end
-
-        private method_name
-      end
-    end
-
-    delegate :get, :post, to: Application
-  end
-end
-
-include Miniweb::Delegator
-
-```
-
-在引入 `miniweb.rb` 时，就会生成对应方法 `get / post`，
-会直接调用 `Application.get / Application.post`。
-
----
-
-# 于是，变成了
-
-miniweb.rb
-
-```ruby
-require 'rack'
-require_relative 'miniweb'
-
-get "/show" do
-  p "show me ..."
-  [200, {}, ["mini_app show ..."]]
-end
-
-post "/create" do
-  p "create me ..."
-  [200, {}, ["mini_app create ..."]]
-end
-
-Rack::Server.start(app: Miniweb::Application)
-```
-
-只要引入 `miniweb`，然后就可以直接使用 `get / post` 去定义路由了。
-
----
-
-大概就是这样... 这是 [miniweb gitlab](https://git.rccchina.com/oliver.chen/miniweb) 代码。
-<br>
-<br>
-当然，这里主要讲的是思路，没有太多的细节，功能也很简单。
-
-
----
-
-# 资料
-
-- [Rack应用及相关](https://www.yuque.com/chenxiaodong-hvqvm/zbb1us/ke7fps)
-- [谈谈 Rack 的协议与实现](https://draveness.me/rack/)
-- [lets-build-a-sinatra](https://thoughtbot.com/blog/lets-build-a-sinatra)
-
-路由相关：
-- [Rails 路由 Journey 与 有限状态自动机](https://ruby-china.org/topics/40988)
-- [在 Swift 下实现了 Rails 风格的路由库](https://ruby-china.org/topics/29133)
+B站的视频课
+- https://www.bilibili.com/video/BV1QW411F7rh
