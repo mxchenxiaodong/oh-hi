@@ -6,11 +6,33 @@ To start the slide show:
 - `npm run dev`
 - visit http://localhost:3030
 
-Edit the [slides.md](./slides.md) to see the changes.
-
 Learn more about Slidev on [documentations](https://sli.dev/).
 
+## 操作提示
 
-## 新增文档时
-- 改一下 vite.config.ts 的base
-- 将 slides.md 的src 指向新的文档
+```bash
+npx slidev --help
+
+命令：
+  slidev [entry]             Start a local server for Slidev            [默认值]
+  slidev build [entry]       Build hostable SPA
+  slidev export [entry]      Export slides to PDF
+```
+
+注意打包是的一些参数：
+
+```bash
+npx slidev build 'markdowns/miniweb.md' --base="/oh-hi/miniweb" --out='dist/miniweb'
+```
+
+具体命令行参数，可以查看 slidev 源码的 `packages/slidev/node/cli.ts`
+
+## 例子
+
+比如，现在如果需要新增一个样式文稿，只需要在 `markdowns` 文件新增一个 `markdown` 文件，假如叫做（`some_example.md`） 。
+
+然后就可以启动预览：`npx slidev 'markdowns/some_example.md'` 。
+
+## 其他配置
+
+如有需要，可以在 `vite.config.ts` 设置。
