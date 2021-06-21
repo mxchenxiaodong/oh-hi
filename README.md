@@ -10,6 +10,8 @@ Learn more about Slidev on [documentations](https://sli.dev/).
 
 ## 操作提示
 
+### 1、查看帮助命令
+
 ```bash
 npx slidev --help
 
@@ -19,7 +21,7 @@ npx slidev --help
   slidev export [entry]      Export slides to PDF
 ```
 
-注意打包是的一些参数：
+### 2、注意打包是的一些参数
 
 ```bash
 npx slidev build 'markdowns/miniweb.md' --base="/slidev/docs/miniweb" --out='docs/miniweb'
@@ -29,12 +31,23 @@ npx slidev build 'markdowns/learn_ruby.md' --base="/slidev/docs/learn_ruby" --ou
 
 具体命令行参数，可以查看 slidev 源码的 `packages/slidev/node/cli.ts`
 
-## 例子
+生成访问地址为：
+
+- https://mxchenxiaodong.github.io/slidev/docs/miniweb
+- https://mxchenxiaodong.github.io/slidev/docs/learn_ruby
+
+GitHub Pages 配置：
+
+```
+branch: main  /root
+```
+
+## 3、例子
 
 比如，现在如果需要新增一个样式文稿，只需要在 `markdowns` 文件新增一个 `markdown` 文件，假如叫做（`some_example.md`） 。
 
 然后就可以启动预览：`npx slidev 'markdowns/some_example.md'` 。
 
-## 其他配置
+## 4、其他配置
 
 如有需要，可以在 `vite.config.ts` 设置。
