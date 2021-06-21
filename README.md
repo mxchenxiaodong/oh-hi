@@ -22,7 +22,9 @@ npx slidev --help
 注意打包是的一些参数：
 
 ```bash
-npx slidev build 'markdowns/miniweb.md' --base="/oh-hi/miniweb" --out='dist/miniweb'
+npx slidev build 'markdowns/miniweb.md' --base="/slidev/docs/miniweb" --out='docs/miniweb'
+
+npx slidev build 'markdowns/learn_ruby.md' --base="/slidev/docs/learn_ruby" --out='docs/learn_ruby'
 ```
 
 具体命令行参数，可以查看 slidev 源码的 `packages/slidev/node/cli.ts`
