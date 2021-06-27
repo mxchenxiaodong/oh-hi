@@ -8,6 +8,7 @@ background: https://source.unsplash.com/collection/94734566/1920x1080
 class: 'text-center'
 # https://sli.dev/custom/highlighters.html
 highlighter: shiki
+# colorSchema: 'dark'
 # some information about the slides, markdown enabled
 info: |
   ## Rack 是怎么选到 Puma 作为默认服务器？
@@ -84,7 +85,7 @@ Use Ctrl-C to stop
 
 ---
 
-##  3、那是怎么优先选择到 `Puma` ？
+## 3、那是怎么优先选择到 `Puma` ？
 
 把 `rack` 的源码拉下来 ...
 
@@ -198,6 +199,8 @@ Rack::Server.start
 2. 最终又以 `rack gem` 的哪个地方作为入口？-- -- 最终入口是 `rack/bin/rackup` 这个文件。
 
 ---
+
+## 7、深入
 
 那现在来看看 `lib/rack/server.rb`
 
@@ -443,3 +446,11 @@ end
 7. `rubygems require` 会尝试去 `Gem` 匹配搜索
 8. 一旦匹配到，会将相关目录添加到 `$LOAD_PATH`
 9. 然后会在 `$LOAD_PATH` 执行匹配
+
+---
+
+## 8、资料
+
+
+- [像 `rails/rake/sidekiq` 这些命令，为什么可以直接在终端执行？](https://www.yuque.com/chenxiaodong-hvqvm/zbb1us/hsylv5)
+- [Rack应用及相关](https://www.yuque.com/chenxiaodong-hvqvm/zbb1us/ke7fps)
