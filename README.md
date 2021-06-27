@@ -27,6 +27,8 @@ npx slidev --help
 npx slidev build 'markdowns/miniweb.md' --base="/slidev/docs/miniweb" --out='docs/miniweb'
 
 npx slidev build 'markdowns/learn_ruby.md' --base="/slidev/docs/learn_ruby" --out='docs/learn_ruby'
+
+npx slidev build 'markdowns/rack_how_select_puma.md' --base="/slidev/docs/rack_how_select_puma" --out='docs/rack_how_select_puma'
 ```
 
 具体命令行参数，可以查看 slidev 源码的 `packages/slidev/node/cli.ts`
