@@ -235,7 +235,7 @@ end
 
 app.rb
 
-```ruby {6-14}
+```ruby {6-14|16-20}
 require 'rack'
 require_relative 'miniweb'
 
@@ -380,6 +380,8 @@ end
 <br>
 <br>
 
+<v-click>
+
 有这么可以库: [mustermann: your personal string matching expert](https://github.com/sinatra/mustermann)
 
 可以指定各种匹配的模式：
@@ -389,6 +391,8 @@ end
 | shell | /*.{png,jpg}      |    Unix Shell (bash, zsh) |
 | sinatra | /:slug(.:ext)?      |    Sinatra (2.x), Padrino (>= 0.13.0), Pendragon, Angelo |
 | ...   | ... |  ... |
+
+</v-click>
 
 ---
 
@@ -425,7 +429,7 @@ params = pattern.params('api/users/1')
 也就是除了原先保存的一个 `block`, 现在还得加多一个 `pattern` .
 
 <div class="grid grid-cols-2 gap-x-4">
-  <div>
+  <div v-click>
 
 等值匹配：
 ```ruby
@@ -436,7 +440,7 @@ end
 ```
   </div>
 
-  <div>
+  <div v-click>
 
 模式匹配：
 ```ruby {4-5}
@@ -465,7 +469,7 @@ end
 最简单一种就是: **遍历**.
 
 <div class="grid grid-cols-2 gap-x-4">
-  <div>
+  <div v-click>
 
 等值匹配：
 ```ruby {6}
@@ -485,7 +489,7 @@ end
 ```
   </div>
 
-  <div>
+  <div v-click>
 
 模式匹配：
 ```ruby {6-17}
@@ -565,11 +569,13 @@ end
 require 'rack'
 require_relative 'miniweb'
 
-get "/show_pattern/:id" do
+app = Miniweb::Base.new
+
+app.get "/show_pattern/:id" do
   [200, {}, ["mini_app pattern match ..., params: #{@params}"]]
 end
 
-Rack::Server.start(app: Miniweb::Application)
+Rack::Server.start(app: app)
 ```
 
 访问 http://localhost:9292/show_pattern/1
@@ -603,7 +609,7 @@ end
 
   </div>
 
-  <div>
+  <div v-click>
 
 改版：
 ```ruby {3}
