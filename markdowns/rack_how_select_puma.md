@@ -204,7 +204,7 @@ Rack::Server.start
 
 那现在来看看 `lib/rack/server.rb`
 
-```ruby {all|3-5|7-10|12-14}
+```ruby {all|3-5|7-10|12-17}
 module Rack
   class Server
     def self.start
@@ -218,10 +218,69 @@ module Rack
 
     def server
       @_server ||= Rack::Handler.get(options[:server])
+
+      unless @_server
+        @_server = Rack::Handler.default
+
+        ...
+      end
     end
   end
 end
 ```
+
+---
+
+<div class="grid grid-cols-2 gap-x-4">
+<div>
+
+```ruby {all|2-4|11}
+module Rack
+  module Handler
+    # puma 位于第一位
+    SERVER_NAMES = %w(puma falcon webrick).freeze
+    private_constant :SERVER_NAMES
+
+    def self.default
+      if rack_handler = ENV[RACK_HANDLER]
+        self.get(rack_handler)
+      else
+        pick SERVER_NAMES
+      end
+    end
+  end
+end
+```
+
+</div>
+
+<div>
+
+```ruby {all|8-13}
+# Select first available Rack handler given an `Array` of server names.
+# Raises `LoadError` if no handler was found.
+#
+#   > pick ['puma', 'webrick']
+#   => Rack::Handler::WEBrick
+def self.pick(server_names)
+  server_names = Array(server_names)
+  server_names.each do |server_name|
+    begin
+      return get(server_name.to_s)
+    rescue LoadError, NameError
+    end
+  end
+
+  raise LoadError, "Couldn't find handler for: #{server_names.join(', ')}."
+end
+```
+
+</div>
+</div>
+
+也就是说：
+- `Rack::Handler.default`，会去调用 `pick`。
+- `pick` 根据 `puma falcon webrick` 的顺序去遍历，检查是否能够正确加载相关模块。
 
 ---
 
