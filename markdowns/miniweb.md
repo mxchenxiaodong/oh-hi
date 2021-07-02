@@ -79,7 +79,7 @@ Rack::Server.start(app: app)
   </div>
 
   <div v-click>
-    <p> 2. 是一个 <a href="https://github.com/rack/rack">gem</a></p>
+    <p> 2. 是一个 <a href="https://github.com/rack/rack">gem</a> —— 对规范的具体实现</p>
 
     封装了对 HTTP 请求数据的处理。
 
@@ -323,7 +323,7 @@ end
 
 初版
 
-```ruby
+```ruby {all|5-7|9|11-12|all}
 # miniweb.rb
 module Miniweb
   class Base
@@ -334,15 +334,17 @@ module Miniweb
 
       handler = @routes[verb][requested_path]
 
+      # 是 block
       handler.call
     end
   end
 end
 ```
-  Rack 中有许多类似 `Rack::Request` 的工具可以使用。
+
+  Rack 中有许多类似 `Rack::Request` 的工具可用。
   </div>
 
-  <div>
+  <div v-click>
 
 未找到匹配路由
 
@@ -432,7 +434,7 @@ params = pattern.params('api/users/1')
   <div v-click>
 
 等值匹配：
-```ruby
+```ruby {2-3}
 def route(verb, path, &handler)
   @routes[verb] ||= {}
   @routes[verb][path] = handler
@@ -443,7 +445,7 @@ end
   <div v-click>
 
 模式匹配：
-```ruby {4-5}
+```ruby {2-5}
 def route(verb, path, &handler)
   @routes[verb] ||= []
 
