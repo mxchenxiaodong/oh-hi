@@ -1,5 +1,4 @@
 ---
-layout: center
 download: true
 # try also 'default' to start simple
 theme: seriph
@@ -13,7 +12,7 @@ highlighter: shiki
 # colorSchema: 'dark'
 # some information about the slides, markdown enabled
 info: |
-  ## Ruby 培训资料
+  ## Grafana 初体验
 
 ---
 
@@ -166,5 +165,3 @@ Exporter <— Promethues <— Grafana 
 “听所有的意见，然后有自己的判断”。
 
 拓展一下思路。说不定以后就用上了呢？
-
----
