@@ -29,6 +29,9 @@ npx slidev build 'markdowns/miniweb.md' --base="/slidev/docs/miniweb" --out='doc
 npx slidev build 'markdowns/learn_ruby.md' --base="/slidev/docs/learn_ruby" --out='docs/learn_ruby'
 
 npx slidev build 'markdowns/rack_how_select_puma.md' --base="/slidev/docs/rack_how_select_puma" --out='docs/rack_how_select_puma'
+
+npx slidev build 'markdowns/retry_design.md' --base="/slidev/docs/retry_design" --out='docs/retry_design'
+npx slidev build 'markdowns/grafana.md' --base="/slidev/docs/grafana" --out='docs/grafana'
 ```
 
 具体命令行参数，可以查看 slidev 源码的 `packages/slidev/node/cli.ts`
@@ -36,7 +39,9 @@ npx slidev build 'markdowns/rack_how_select_puma.md' --base="/slidev/docs/rack_h
 生成访问地址为：
 
 - https://mxchenxiaodong.github.io/slidev/docs/miniweb
-- https://mxchenxiaodong.github.io/slidev/docs/learn_ruby
+- https://mxchenxiaodong.github.io/slidev/docs/rack_how_select_puma
+- https://mxchenxiaodong.github.io/slidev/docs/retry_design
+- https://mxchenxiaodong.github.io/slidev/docs/grafana
 
 GitHub Pages 配置：
 

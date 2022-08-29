@@ -178,7 +178,7 @@ func newDefaultRetryConfig() *Config {
 
 ---
 
-```go
+```go {3|5-7|9|10|12-14|15|16-18|all}
 func Do(retryableFunc RetryableFunc, opts ...Option) error {
   var n uint
   config := newDefaultRetryConfig()
@@ -211,7 +211,7 @@ func Do(retryableFunc RetryableFunc, opts ...Option) error {
 
 调用的方式，如下：
 
-```go
+```go {2-4|5-10|all}
 retry.Do(
 	func() error {
 		return errors.New("special error")
@@ -234,7 +234,7 @@ retry.Do(
 
 ---
 
-```ruby
+```ruby {2-3|9-18|all}
 def retriable(opts = {})
   # 新增默认配置，并对进行指定配置的合并
   local_config = opts.empty? ? config : Config.new(config.to_h.merge(opts))
@@ -259,7 +259,7 @@ def retriable(opts = {})
 
 ---
 
-```ruby
+```ruby {5-7|9-13|16|17|all}
   tries.times do |index|
     try = index + 1
 
